@@ -1,4 +1,4 @@
-# 섹션 1
+![image](https://github.com/Kimpossible94/TIL/assets/80395024/504e965b-e084-4d69-92c0-aa6326569d66)# 섹션 1
 웹개발자라면 평생 HTTP 기반위에서 개발을 해야한다.  
 그러니 언젠가 한번은 HTTP에 대해서 공부하고 정리를 해둬야한다.  
 
@@ -573,3 +573,73 @@ GET, HEAD, POST, PATCH 캐시가능
 ```
 
 ---  
+
+
+<br>
+<br>
+<br>
+<br>
+
+# 섹션 5
+HTTP 메서드 활용
+
+<br>
+
+---
+## 클라이언트에서 서버로 데이터 전송  
+
+### 클라이언트에서 서버로 데이터 전송
+데이터의 전송방식은 크게 2가지 이다.  
+1. 쿼리파라미터를 이용한 전송방식  
+   - GET  
+   - 주로 정렬 필터  
+2. 메시지 바디를 이용한 전송방식  
+   - POST, PUT, PATCH  
+   - 리소스 변경 또는 리소스 등록  
+  
+### 4가지 상황을 통한 데이터 전송 방법 알아보기
+1. 정적 데이터 조회 (쿼리 파라미터 미사용)  
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/1c75a9fe-755b-4677-a5f0-419b705e0f3d">  
+  
+```
+* 단순히 star.jpg라는 이미지의 리소스를 클라이언트에게 전달해준다.
+```
+
+2. 동적 데이터 조회 (쿼리 파라미터 사용)  
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/cd052fbb-55ea-490d-ba01-a70cb8571cec">
+
+```
+* 조회 조건을 줄여주는 필터, 조회 결과를 정렬하는 정렬 조건에 주로 사용
+```
+
+3. HTML Form 데이터 전송  
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/3cea843b-df93-4bb4-a258-3db4bb86973d">
+
+```
+* 전송 버튼을 누르면 웹브라우저가 Form 데이터를 읽어서 오른쪽처럼 HTTP 메시지를 생성해준다.
+* method를 get으로 바꾸면 쿼리 파라미터로 보내지는데, 리소스가 변경되는 요청은 GET으로 하면 안된다.
+* 한글 같은게 들어가 있는 경우 인코딩이 되어서 요청값이 넘어간다.
+* HTML Form 전송은 GET, POST만 지원한다.
+```
+  
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/ba8bc944-d879-4e3e-b624-13d67a205be9">   
+  
+```
+* 사진과 같이 파일이 같이 전송된다면 multipart/form-data를 사용해야 한다.
+* multipart/form-data를 사용하면 웹브라우저가 boundary라는 것을 만들어서 데이터를 자른다.
+```
+
+4. HTTP API 전송
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/6b6a4f0c-90e8-4721-9b65-5af1ff10366a">  
+
+
+```
+* API에서 요구하는 데이터를 만들어서 요청하면 된다.
+* 서버 to 서버 백엔드 시스템 통신에서 사용
+* HTML에서 From 전송 대신 자바 스크립트를 통한 통신에 사용(AJAX)
+* Content-Type : application/json을 주로 사용 (사실상 표준)
+
+```
+
+
+---
