@@ -1,4 +1,4 @@
-![image](https://github.com/Kimpossible94/TIL/assets/80395024/504e965b-e084-4d69-92c0-aa6326569d66)# 섹션 1
+# 섹션 1
 웹개발자라면 평생 HTTP 기반위에서 개발을 해야한다.  
 그러니 언젠가 한번은 HTTP에 대해서 공부하고 정리를 해둬야한다.  
 
@@ -638,7 +638,103 @@ HTTP 메서드 활용
 * 서버 to 서버 백엔드 시스템 통신에서 사용
 * HTML에서 From 전송 대신 자바 스크립트를 통한 통신에 사용(AJAX)
 * Content-Type : application/json을 주로 사용 (사실상 표준)
+```
 
+### HTTP API 설계 예시
+1. 회원 관리 시스템  
+```
+* 회원 목록 : /members => GET
+* 회원 등록 : /members => POST
+* 회원 조회 : /members/{id} => GET
+* 회원 수정 : /members/{id} => PATCH, PUT, POST
+* 회원 삭제 : /members/{id} => DELETE
+
+회원 관리 시스템은 위처럼 설계하면 된다.
+
+회원 등록시 POST로 데이터를 넘기면 서버가 회원을 만들고 리소스 URI(ex. /members/100)를 만들어 준다.
+그리고 HTTP 응답 메세지 Header에 Location: /members/100 이런식으로 데이터를 클라이언트에게 넘겨준다.
+이렇게 서버가 관리하는 리소스 디렉토리를 "컬렉션(Collection)"이라고 한다.
+```  
+
+2. 파일 관리 시스템  
+```
+* 파일 목록 : /files => GET
+* 파일 조회 : /files/{fileName} => GET
+* 파일 등록 : /files/{fileName} => PUT
+* 파일 삭제 : /files/{fileName} => DELETE
+* 파일 대량 등록 : /files => POST
+
+파일 관리 시스템은 위처럼 설계하면 된다.
+파일의 경우 동일한 이름으로 파일이 있다면 덮어씌워야 하므로 PUT을 쓴다.
+
+회원과 다르게 파일을 등록할 때 클라이언트가 fileName을 직접 넘겨주는데,
+클라이언트가 리소스 URI를 알고 관리해야 한다는 뜻이다.
+이렇게 클라이언트가 관리하는 리소스 저장소를 "스토어(Store)"라고 한다.
+```
+
+3. HTML FORM을 사용한 회원 관리 시스템  
+```
+HTML FORM은 GET과 POST만 지원한다.
+
+* 회원 목록 : /members => GET
+* 회원 등록 폼 : /members/new => GET
+* 회원 등록 : /members/new, /members => POST
+회원 등록 폼을 불러올 때는 /members/new
+등록할 때는 /members/new 또는 /members를 사용
+
+* 회원 조회 : /members/{id} => GET
+* 회원 수정 폼 : /members/{id}/edit => GET
+* 회원 수정 : /members/{id}/edit, /members/{id} => POST
+
+* 회원 삭제 : /members/{id}/delete => POST
+
+GET, POST만 지원하므로 위와 같은 설계가 나온다. (제약이 있음)
+제약을 해결하기 위해 동사로 된 리소스 경로가 사용되는데, 이런것을 컨트롤 URI라고 부른다.
+컨트롤 URI는 HTTP 메서드로 해결하기 애매한 경우에 사용한다. (실무에서 많이 사용된다.)
+(최대한 리소스라는 개념을 가지고 URI를 설계하고 그게 안될 때 컨트롤 URI를 대체재로 사용해야한다.)
+```
+
+4. 리소스 종류   
+```
+* 문서(document)
+  - 단일 개념(파일 하나, 객체 인스턴스, 데이터베이스 row)
+  - ex. /members/100, /files/star.jpg
+* 컬렉션(Collection)
+  - 서버가 관리하는 리소스 디렉터리
+  - 서버가 리소스의 URI를 생성하고 관리
+  - ex. /members
+* 스토어(Store)
+  - 클라이언트가 관리하는 리소스 저장소
+  - 클라이언트가 리소스의 URI를 알고 관리
+  - ex. /files
+* 컨트롤러, 컨트롤 URI
+  - 문서, 컬렉션, 스토어로 해결하기 어려운 추가 프로세스 실행
+  - 동사를 직접 사용
+  - ex. /members/{id}/delete
+```  
+
+---
+
+
+<br>
+<br>
+<br>
+<br>
+
+# 섹션 6
+HTTP 상태 코드
+
+<br>
+
+---   
+## HTTP 상태코드  
+HTTP 상태코드는 크게 5가지로 나눠진다.  
+```
+1. 1xx : 요청이 수신되어 처리중 (거의 사용되지 않음)
+2. 2xx : 요청 정상 처리
+3. 3xx : 요청을 완료하려면 추가 행동이 필요
+4. 4xx : 클라이언트 오류, 잘못된 문법등으로 서버가 요청을 수행할 수 없음
+5. 5xx : 서버 오류, 서버가 정상 요청을 처리하지 못함
 ```
 
 
