@@ -1,4 +1,4 @@
-<img width="1053" alt="image" src="https://github.com/Kimpossible94/TIL/assets/80395024/389e4b10-1451-4f85-b040-089eb1494d47"># 섹션 1
+# 섹션 1
 웹개발자라면 평생 HTTP 기반위에서 개발을 해야한다.  
 그러니 언젠가 한번은 HTTP에 대해서 공부하고 정리를 해둬야한다.  
 
