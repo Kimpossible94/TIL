@@ -1111,6 +1111,7 @@ no-cache의 경우 그림처럼 요청을 받은 프록시 서버가 no-cache이
 ```
 
 <img width="600" alt="image" src="https://github.com/Kimpossible94/TIL/assets/80395024/e0a22055-6895-4e92-9b3a-3c98c8ea0e42">  
+
 ```
 must-revalidate는 원서버에서 검증할 수 없는 경우 무조건 504 에러를 발생하도록 되어있다.
 ```
