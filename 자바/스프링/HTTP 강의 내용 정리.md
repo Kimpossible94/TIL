@@ -1,4 +1,4 @@
-# 섹션 1
+<img width="1053" alt="image" src="https://github.com/Kimpossible94/TIL/assets/80395024/389e4b10-1451-4f85-b040-089eb1494d47"># 섹션 1
 웹개발자라면 평생 HTTP 기반위에서 개발을 해야한다.  
 그러니 언젠가 한번은 HTTP에 대해서 공부하고 정리를 해둬야한다.  
 
@@ -736,6 +736,383 @@ HTTP 상태코드는 크게 5가지로 나눠진다.
 4. 4xx : 클라이언트 오류, 잘못된 문법등으로 서버가 요청을 수행할 수 없음
 5. 5xx : 서버 오류, 서버가 정상 요청을 처리하지 못함
 ```
+정리하던 데이터 날아감... 다시 듣고 작성 해야함...
 
+---
+
+
+<br>
+<br>
+<br>
+<br>
+
+# 섹션 7
+HTTP 헤더 - 일반헤더  
+
+<br>
+
+---   
+## HTTP 헤더 개요  
+
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/42826a8d-fb47-4c2e-a9a4-370685c3311f">  
+
+RFC7230에서는 표현이라는 것이 나오는데 요청이나 응답에서 전달할 실제 데이터를 말하며, 표현 메타데이터 + 표현 데이터로 이루어져 있다.  
+메시지 본문(message body)을 통해 표현 데이터 전달한다. (메시지 본문 = 페이로드(payload))  
+
+표현 헤더는 표현 데이터를 해석할 수 있는 정보를 제공한다.  
+
+## 표현  
+표현 헤더는 표현 데이터를 해석할 수 있는 정보를 제공하는데 아래와 같은 정보를 제공한다.  
+
+* Content-Type: 표현 데이터의 형식  
+  - text/html; charset=utf-8, application/json, image/png ...  
+* Content-Encoding: 표현 데이터의 압축 방식  
+  - 데이터를 전달하는 곳에서 압축 후 인코딩 헤더 추가  
+  - 데이터를 읽는 쪽에서 인코딩 헤더의 정보로 압축 해제  
+  - gzip, deflate, identity ...  
+* Content-Language: 표현 데이터의 자연 언어  
+  - ko, en, en-US ...  
+* Content-Length: 표현 데이터의 길이  
+  - 바이트 단위  
+  - Transfer-Encoding(전송 코딩)을 사용하면 Content-Length를 사용하면 안됨  
+
+## 협상  
+협상은 클라이언트가 선호하는 표현을 서버에 요청하는 것을 말한다. (서버가 못줄 수도 있다.)  
+협상 헤더는 요청시에만 사용한다.  
+* Accept: 클라이언트가 선호하는 미디어 타입 전달 
+* Accept-Charset: 클라이언트가 선호하는 문자 인코딩 
+* Accept-Encoding: 클라이언트가 선호하는 압축 인코딩 
+* Accept-Language: 클라이언트가 선호하는 자연 언어
+
+### 예시  
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/9ecd1b3a-a3c2-472c-8a96-dffe82088b13">   
+  
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/d9dd6c21-2791-4650-8ccc-7e2151dfa249">  
+  
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/a8f33fca-6b9d-4cb0-87e5-59b067e7a247">  
+  
+```
+적용전에는 외국어 사이트의 이벤트 페이지를 요청하면 서버에서는 기본값은 영어로된 페이지를 반환해준다.
+하지만, Accept-Language를 한국어로 요청하면 한국어로된 페이지를 서버에서 리턴해준다.
+
+마지막으로 다중언어를 지원해주는 페이지이지만 영어, 독일어를 지원하고 한국어를 지원하지 않는 사이트에서
+한국어를 지원하지 않는다면 영어로 되어있는 페이지를 선호하는 상황이다.
+이 상황에서는 서버에 ko로 보낸다면 기본값일 독일어로된 페이지를 리턴할 것이다.
+마지막처럼 복잡한 상황에서 필요한 것이 "우선순위"이다.  
+```  
+
+## 협상과 우선순위  
+우선순위를 결정하기 위해 Quality Values를 사용한다.  
+0~1사이의 숫자를 사용하며, 클수록 높은 우선순위이다. (생략하면 1)  
+
+```
+아래처럼 Accept-Language을 요청했을 때
+Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+
+우선순위는 다음과 같다.
+1. ko-KR;q=1 (q생략)
+2. ko;q=0.9
+3. en-US;q=0.8
+4. en;q=0.7
+
+마지막같은 경우에서는 Accept-Language에 독일어(de)는 없고 en이 있기때문에 영어로된 페이지를 리턴해준다.  
+```
+
+**구체적인 것이 우선이다.**  
+```
+아래처럼 Accept(미디어 타입)를 요청했을 때
+Accept: text/*, text/plain, text/plain;format=flowed, */*
+
+우선순위는 다음과 같다.
+1. text/plain;format=flowed
+2. text/plain
+3. text/*
+4. */*
+```
+
+## 전송 방식  
+전송 방식에는 아래의 4가지 방식이 있다.  
+
+* 단순 전송
+```
+HTTP/1.1 200 OK
+Content-Type: text/html;charset=UTF-8
+Content-Length: 3423 
+<html>
+ <body>...</body>
+</html>
+
+길이를 알 수 있을 때 사용한다.
+한 번에 요청하고 서버에서 한 번에 쭉 받는다.  
+```
+
+* 압축 전송  
+```
+HTTP/1.1 200 OK
+Content-Type: text/html;charset=UTF-8
+Content-Encoding: gzip 
+Content-Length: 521
+lkj123kljoiasudlkjaweioluywlnfdo912u34ljko98udjkl
+
+서버에서 압축을 해서 전송한다.
+이 경우에는 Content-Encoding로 뭘로 압축되어있는지 알려준다.
+이 경우의 Content-Length는 압축된 크기를 말한다.
+(Content-Length를 압축된 크기로 알려줘야 메세지 전송의 끝을 알 수 있음.)
+(https://www.oreilly.com/library/view/http-the-definitive/1565925092/ch15s02.html)
+```
+
+* 분할 전송  
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Transfer-Encoding: chunked 
+5
+Hello
+5
+World
+0
+\r\n
+
+chunked(덩어리)로 보낼거라고 Transfer-Encoding에 명시해준다.
+5byte의 Hello를 서버에서 보내고,
+5byte의 World를 서버에서 보내고,
+마지막으로 전송이 끝났다는 것을 보낸다.
+
+이 경우에는 데이터가 어떤 데이터를 보낼지 모르기때문에 Content-Length를 보낼 수 없다.
+```
+
+* 범위 전송  
+
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/8e82ca06-0776-4d18-84a2-2a3eb752ccaf">  
+
+
+```
+Content-Range로 범위를 지정해서 요청을 하는 것을 말한다.
+예를 들어 이미지를 다운받다가 중간에 끊겼을 때 다시 요청을 보내 처음부터 받기보다는 중간에 끊어진 부분부터
+다운로드 받을 수 있도록 범위 전송을 보내는 것.
+```
+
+## 일반 정보  
+* From : 유저 에이전트의 이메일 정보
+* Referer : 요쳥된 웹페이지의 이전 주소
+  - 유입 경로 분석 가능
+  - referrer라는 단어의 오타인데 오치면 서버에서 파싱을 못하기때문에 못바꿈
+* User-Agent : 클라이언트 애플리케이션 (=유저 에이전트) 정보
+  - 어떤 종류의 브라우저에서 장애가 발생하는지 파악 가능 
+* Server : 요청을 처리하는 ORIGIN 서버의 소프트웨어 정보
+  - HTTP 요청을 보내면 중간에 여러 프록시서버를 거치게 된다. 그런 서버를 제외하고 진짜 요청이 있는 서버를 말한다.
+  - 응답에서 사용
+* Data : 메시지가 발생한 날짜와 시간
+
+## 특별한 정보  
+* Host: 요청한 호스트 정보(도메인)  
+  <image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/e1708f21-d125-45ce-8738-1bec18228410">  
+  - 하나의 서버가 여러 도메인을 처리해야할 때 사용한다. (하나의 서버안에 여러개의 다른 도메인이 구동)
+  - 필수값
+  - 하나의 서버가 여러 도메인을 처리하면 200.200.200.1 에 hello 라는 요청을 보냈을 때 IP로 요청을 보내므로 어떤 도메인에서 처리해야할지 알 수 없다.
+  - Host가 있다면 어느 도메인에서 처리해야하는지 알 수 있기때문에 처리가 가능하다.
+* Location: 페이지 리다이렉션
+* Allow: 허용 가능한 HTTP 메서드
+* Retry-After: 유저 에이전트가 다음 요청을 하기까지 기다려야 하는 시간
+
+## 인증  
+* Authorization: 클라이언트 인증 정보를 서버에 전달
+  - OAuth 등 여러 인증 방식이 있기때문에 그에 대한 값을 넣어준다.
+  - HTTP 헤더의 Authorization는 어떤 인증방식인지는 모르고 일단 헤더를 제공해준다.
+* WWW-Authenticate: 리소스 접근시 필요한 인증 방법 정의
+
+## 쿠키  
+* Set-Cookie: 서버에서 클라이언트로 쿠키 전달(응답)
+* Cookie: 클라이언트가 서버에서 받은 쿠키를 저장하고, HTTP 요청시 서버로 전달
+
+### Stateless
+  - HTTP는 무상태(Stateless) 프로토콜이기 때문에 클라이언트와 서버가 요청과 응답을 주고 받으면 연결이 끊어진다.
+  - 클라이언트가 다시 요청하면 서버는 이전 요청을 기억하지 못하기 때문에 클라이언트가 누군지 알 수 없다.
+  - 그럼 모든 요청에 사용자 정보를 넣어야한다. 하지만, 이렇게하면 보안에 문제도 있고 브라우저를 완전히 종료하면 역시 똑같은 문제가 생긴다.
+ 
+### 쿠키의 이용  
+쿠키를 이용하는 예제를 알아보자  
+  <image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/5b99702f-67a0-4e6b-9ddc-ac9491385f69">  
+  
+  - 웹 브라우저에서 로그인 시 사용자 정보를 보내면, 서버에서는 로그인이 성공했을 때 해당 정보를 "쿠키 헤더"에 담아서 응답을 한다.
+  - 웹 브라우져 내부에는 쿠키 저장소가 있는데 그 저장소에다가 user=홍길동을 저장해둔다.
+ 
+  <image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/3c4b3571-643e-4aee-a91a-3ede3afb718b">  
+    
+  - 이제 로그인 이후에 welcome 페이지에 들어간다면, 자동으로 웹 브라우져는 서버에 요청을 보낼 때마다 쿠키 저장소에서 해당 쿠키 값을 꺼내서 요청 메세지에 쿠키를 넣어준다.
+  - 서버는 쿠키를 열어보고, 유저가 누구인지 알 수 있다.
+
+그런데 모든 곳에 다 쿠키를 보내면 보안상 문제가 생기고 여러 잠재적인 문제들이 생길 수 있다.  
+
+### 쿠키의 단점  
+쿠키 정보는 항상 서버에 전송되기 때문에 아래와 같은 단점이 있다.  
+* 네트워크 트래픽 유발
+* 보안상 문제 
+  - 개인정보 노출에 관련된 문제
+  - 사용자의 장치에 저장되는 쿠키의 특성상 사용자의 관리 부실로 인해 쿠키를 탈취 당하거나, 쿠키 정보를 조작하여 다른 사용자로 위장하거나 세션을 도용하는 등
+ 
+** 쿠키를 서버에 보내지 않고 웹 브라우저 내부에 저장하고 필요할 때만 자바스크립트를 통해 사용하고 싶다면 webStorage(localStorage, sessionStorage) 사용  
+** 쿠키에는 민감한 정보는 절대 저장해서는 안된다 !!  
+
+### 쿠키의 생명주기  
+* Set-Cookie: expires=Sat, 26-Dec-2020 04:39:21 GMT
+  - 만료일이 되면 쿠키 삭제
+* 세션 쿠키: 만료 날짜를 생략하면 브라우저 종료시 까지만 유지
+* 영속 쿠키: 만료 날짜를 입력하면 해당 날짜까지 유지
+
+### 쿠키의 도메인 지정  
+* 예) domain=example.org
+* 도메인을 명시 했을 때는 명시한문서기준도메인과 서브도메인 모두 쿠키에 접근이 가능하다.
+  - domain=example.org를 지정해서 쿠키 생성
+  - example.org는 물론이고, dev.example.org도 쿠키 접근
+* 도메인을 생략 했을 때는 기준도메인만 쿠키에 접근이 가능하다.
+  - example.org 에서 쿠키를 생성하고 domain 지정을 생략  
+  - example.org 에서만 쿠키 접근가능 dev.example.org는 쿠키 접근 불가능
+
+### 쿠키 경로 설정  
+* 예) path=/home
+* 경로를 지정했을 경우 경로를 포함한 하위경로페이지만 쿠키 접근가능
+* 일반적으로 path=/ 루트로 지정
+
+### 쿠키의 보안  
+* 원래 쿠키는 http, https를 구분하지 않고 전송하는데 Secure를 적용하면 https인 경우에만 전송
+* HttpOnly를 적용하면 자바스크립트에서 접근 불가(XXS 공격 방지)
+* SameSite를 적용하면 요청 도메인과 쿠키에 설정된 도메인이 같은경우만 쿠키 전송 (XSRF 공격 방지)
+---
+
+
+<br>
+<br>
+<br>
+<br>
+
+# 섹션 8
+HTTP 헤더 - 캐시와 조건부 요청
+
+<br>
+
+---
+## 캐시 기본 동작  
+  
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/262314ba-abb2-4adf-8731-14c2bb150a35">  
+
+```
+웹브라우저에 사진을 요청하면 위의 그림처럼 요청한 사진에 대한 데이터가 담긴 HTTP 헤더, HTTP 바디 부분이 응답된다.
+캐시가 없다면 동일한 재요청에 대해 HTTP헤더, HTTP바디를 만들어서 다시 응답해준다.
+```
+데이터 변경되지 않은 동일한 요청이지만 네트워크를 통해 요청을 받아야한다.  
+해당 페이지에 이런 사진요청이 많다면 브라우저는 로딩 속도가 느려지기 때문에 사용자는 경험이 좋지 않을 것 이다.  
+
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/85260d7f-f604-4dc6-99c8-9fb92fd3bb44">  
+
+```
+1. 서버에서 캐시를 적용하면 응답 헤더에 cache-control이라는 것을 넣어줄 수 있다. (캐시가 유효한 시간을 설정한 것)
+2. 클라이언트는 브라우저의 캐시에 응답결과를 저장한다.
+3. 그리고 다음에 요청을 했을 때 브라우저는 캐시를 탐색하고 유효한 것이 있다면 네트워크를 통신하지 않고 데이터를 반환한다.
+4. 만약 캐시 유효 시간이 지나면 다시 서버에 요청을해서 데이터를 받고 캐시를 덮어 씌운다.
+```
+
+## 검증 헤더와 조건부 요청
+캐시 시간이 초과됐을 때는 무조건 서버로 요청을 보내서 응답을 받아야한다.  
+하지만, 서버의 데이터와 클라이언트의 데이터에 변화가 없고 단순히 캐시 유효 시간이 초과된거라면 그 때마다 소모되는 비용이 너무 아깝게 된다.  
+이러한 점을 개선하기 위한 방법을 알아보자.  
+
+### 검증 헤더  
+* 캐시 데이터와 서버 데이터가 같은지 검증하는 데이터
+* Last-Modified , ETag  
+  
+### Last-Modified  
+
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/3cbe5656-6f14-4634-baa2-2ce89e28aa37">  
+  
+```
+위의 그림과 같이 최종 수정된 시간(Last-Modified)를 응답 헤더에 넣어둔다.
+그럼 이전과 다르게 캐시에 Last-Modified 정보를 같이 저장한다.
+```
+  
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/9710f6d5-c001-47c3-9bf0-6f0c933c7c27">  
+  
+<image style="width: 600px" src="https://github.com/Kimpossible94/TIL/assets/80395024/99cbfc0b-3e60-4d02-a7b3-4172f2a3cdee">  
+
+```
+그리고 캐시 유효 기간이 만료되었다면 if-modified-since라는 헤더 속성을 통해 캐시가 가지고있는 최종 수정일 값을 넘긴다.
+그럼 서버에서는 최종 수정일을 비교해서 수정이 되지 않았다면 304 Not Modified 라는 응답을 보낸다.
+* 이 때는 HTTP 바디가 없다.
+응답을 받고 변화가 없다는 것을 알았기 때문에 캐시 유효 기간만 다시 갱신한다.
+
+네트워크를 사용하지만 HTTP 바디를 다시 받지않고 유효기간만 갱신하면 되기 때문에 전송 용량을 줄여 비용을 절감할 수 있다.
+```
+
+**Last-Modified 단점**  
+날짜로만 비교하기 때문에 a에서 b로 다시 b에서 a로 변경했을 경우에도 똑같이 a 상태이지만 다시 데이터를 보내야한다.  
+그리고 서버에서 별도의 캐시 로직을 관리하고 싶은 경우에는 사용할 수 없다. (스페이스나 주석처럼 크게 영향이 없는 경우에는 캐시를 유지하게 하고 싶은 경우)
+
+### ETag  
+캐시용 데이터에 임의의 고유한 버전을 담아주는 것을 말한다. (ETag: "v1.0", ETag: "a2jiodwjekjl3")  
+만약 데이터가 바뀌었다면 이 이름을 바꾸어서 변경함 (Hash를 다시 생성)  
+클라이언트 입장에서는 ETag를 보내서 같으면 유지, 다르다면 다시 받으면 된다.
+
+
+### 조건부 요청 헤더  
+* 검증헤더로 조건에 따른 분기
+* If-Modified-Since: Last-Modified 사용
+* If-None-Match: ETag 사용
+* 조건이 만족하면 200 OK
+* 조건이 만족하지 않으면 304 Not Modified
+
+## 캐시 제어 헤더  
+* Cache-Control: 캐시 제어  
+  - Cache-Control: max-age (캐시 유효 시간, 초 단위)  
+  - Cache-Control: no-cache (데이터를 캐시해도 되지만, 캐시를 항상 원(origin)서버에 검증하고 사용해라.)  
+                            (중간 캐시 서버가 있을 수 있기 때문에 원서버에 검증을 해야함.)  
+  - Cache-Control: no-store (데이터에 민감한 정보가 있으므로 저장하면 안됨)  
+* Pragma: 캐시 제어(하위 호환)  
+* Expires: 캐시 유효 기간(하위 호환)  
+  - 캐시 만료일을 정확한 날짜로 지정  
+  - 지금은 더 유연한 Cache-Control: max-age 권장
+  - Cache-Control: max-age와 함께 사용하면 Expires는 무시
+ 
+## 프록시 캐시  
+우리나라에서 미국에 있는 원서버에 접근하려면 네트워크가 아무리 빨라도 같은 지역보다 응답에 시간이 걸릴 수 밖에 없다.  
+그래서 같은 나라의 어딘가에 프록시 캐시 서버를 도입해놓고 프록시 캐시서버에 접근하도록 만든다.  
+
+<img width="600px" alt="image" src="https://github.com/Kimpossible94/TIL/assets/80395024/d68b1ac4-150b-4fce-a433-a5a25305f53f">  
+
+```
+위의 그림처럼 원서버에 직접 통신하는게 아니라 프록시 캐시 서버와 통신하기 때문에 원서버에 접근하지 않아도 되어서 응답을 빠르게 받을 수 있다.
+```
+
+## 캐시 무효화  
+캐시를 적용안해도 브라우저가 임의로 캐시를 하는 경우가 있다 이것을 방지하기위해 캐시 제어 헤더에 확실하게 캐시를 무효화 할 수 있는 속성이 있다.  
+해당하는 경우에는 
+Cache-Control: no-cache, no-store, must-revalidate
+그리고 하위 호환을 위해 Pragma: no-cache 이렇게 넣어주면 된다.  
+
+* Cache-Control: no-cache
+  - 데이터는 캐시해도 되지만, 항상 원 서버에 검증하고 사용(이름에 주의!)
+* Cache-Control: no-store
+  - 데이터에 민감한 정보가 있으므로 저장하면 안됨  (메모리에서 사용하고 최대한 빨리 삭제)
+* Cache-Control: must-revalidate
+  - 캐시 만료후 최초 조회시 원 서버에 검증해야함
+  - 원 서버 접근 실패시 반드시 오류가 발생해야함 - 504(Gateway Timeout)
+  - must-revalidate는 캐시 유효 시간이라면 캐시를 사용함
+* Pragma: no-cache (HTTP 1.0 하위 호환)
+
+### no-cache와 must-revalidate의 비교  
+no-cache를 사용하면 항상 원서버에 검증하는데 must-revalidate는 왜 필요할까 ?  
+
+<img width="600" alt="image" src="https://github.com/Kimpossible94/TIL/assets/80395024/495491e3-83c1-4f66-9dc1-54dcb1e0a9f9">  
+
+```
+no-cache의 경우 그림처럼 요청을 받은 프록시 서버가 no-cache이므로 원서버로 요청을 위임한다.
+그리고 원서버에 문제가 있는 경우 no-cache에서는 에러 또는 예전에 있던 데이터라도 보여주며 200 OK를 보낸다.
+하지만 통장 잔고같은 경우 과거 데이터를 보내거나하면 안된다.
+이럴 경우 확실하게 에러를 보내는 must-revalidate를 사용한다.
+```
+
+<img width="600" alt="image" src="https://github.com/Kimpossible94/TIL/assets/80395024/e0a22055-6895-4e92-9b3a-3c98c8ea0e42">  
+```
+must-revalidate는 원서버에서 검증할 수 없는 경우 무조건 504 에러를 발생하도록 되어있다.
+```
 
 ---
