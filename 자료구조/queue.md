@@ -3,12 +3,6 @@
 ### FIFO
 Queue는 **FIFO**라는 특성을 가지는 데이터 구조 입니다.  
 FIFO는 선입선출(First In First Out)의 원칙을 말하는데, 먼저들어온 데이터가 먼저 처리된다는 의미입니다.
-   
-FIFO
-삽입과 삭제 enqueue, dequeue
-front와 rear 포인터
-스레드 세이프
-구현
   
 <br>
 
