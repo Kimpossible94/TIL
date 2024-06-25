@@ -35,3 +35,44 @@ class Solution {
 }
 ```  
 copyOfRange()를 사용해서 문제를 해결했다.
+
+### API를 사용하지 않은 풀이
+다른 사람의 풀이에 API를 사용해 푼 것에 대해서 비판하는 댓글을 볼 수 있다.  
+개인적인 생각으로는 성능에 대한 체크를 하지 않으면 API를 사용하는 것이 좋다고 생각하지만, 성능에 대한 부분도 무시할 수 없기 때문에 API를 사용하지 않고 문제를 풀어봐야겠다.
+
+```java
+class Solution {
+    public int[] solution(int[] array, int[][] commands) {
+        int[] answer = new int[commands.length];
+        
+        for(int i = 0; i < commands.length; i++) {
+            int[] cutArr = new int[commands[i][1] - commands[i][0] + 1];
+            
+            for(int j = 0; j < cutArr.length; j++) {
+                cutArr[j] = array[j+commands[i][0]-1];
+            }
+            
+            sort(cutArr);
+            
+            answer[i] = cutArr[commands[i][2]-1];
+        }
+        
+        return answer;
+    }
+    
+    public void sort(int[] arr) {
+        int temp = 0;
+        
+        for(int i = 0; i < arr.length - 1; i++) {
+            for(int j = i+1; j < arr.length; j++) {
+                if(arr[i] > arr[j]) {
+                    temp = arr[j];
+                    arr[j] = arr[i];
+                    arr[i] = temp;
+                }
+            }
+        }
+    }
+}
+```
+속도가 약 20배정도 빨라졌다.
