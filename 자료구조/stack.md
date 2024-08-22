@@ -23,3 +23,93 @@ LIFO는 후입선출(Last In First Out)이라고 하는데, 가장 최근에 들
 <br>
 
 ## 스택의 구현
+Java에서는 기본적으로 Stack 클래스가 제공되지만, 직접 구현을 하고싶다면 보통 LinkedList를 사용합니다.
+
+1. Stack
+```java
+import java.util.Stack;
+
+public class StackExample {
+    public static void main(String[] args) {
+        Stack<Integer> stack = new Stack<>();
+
+        // 스택에 값 추가
+        stack.push(10);
+        stack.push(20);
+        stack.push(30);
+
+        // 스택의 최상단 값 확인
+        System.out.println("최상단 값: " + stack.peek());  // 30
+
+        // 스택에서 값 꺼내기
+        System.out.println("최상단 값: " + stack.pop());  // 30
+        System.out.println("pop후에 최상단 값: " + stack.peek());  // 20
+
+        // 스택이 비어있는지 확인
+        System.out.println(stack.isEmpty());  // false
+    }
+}
+```
+
+2. LinkedList
+```java
+import java.util.LinkedList;
+
+class CustomStack<T> {
+    private LinkedList<T> list = new LinkedList<>();
+
+    // 스택에 값 추가
+    public void push(T value) {
+        list.addFirst(value);
+    }
+
+    // 스택에서 값 꺼내기
+    public T pop() {
+        // 스택에 값이 있는지 확인 후 데이터 반환
+        if (!isEmpty()) {
+            return list.removeFirst();
+        }
+        return null;
+    }
+
+    // 스택의 최상단 값 확인
+    public T peek() {
+        // 스택에 값이 있는지 확인 후 데이터 반환
+        if (!isEmpty()) {
+            return list.getFirst();
+        }
+        return null;
+    }
+
+    // 스택이 비어있는지 확인
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+
+    // 스택의 크기 확인
+    public int size() {
+        return list.size();
+    }
+}
+
+public class StackExample {
+    public static void main(String[] args) {
+        CustomStack<Integer> stack = new CustomStack<>();
+
+        // 스택에 값 추가
+        stack.push(10);
+        stack.push(20);
+        stack.push(30);
+
+        // 스택의 최상단 값 확인
+        System.out.println("최상단 값: " + stack.peek()); // 30
+
+        // 스택에서 값 꺼내기
+        System.out.println("최상단 값: " + stack.pop()); // 30
+        System.out.println("pop후에 최상단 값: " + stack.peek()); // 20
+
+        // 스택이 비어있는지 확인
+        System.out.println(stack.isEmpty()); // false
+    }
+}
+```
